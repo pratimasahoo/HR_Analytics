@@ -1,0 +1,202 @@
+Enter password: *****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 43
+Server version: 8.0.42 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use hr;
+Database changed
+mysql> # total emplyoees #
+mysql> select count(*) from hr_data;
++----------+
+| count(*) |
++----------+
+|    50000 |
++----------+
+1 row in set (0.02 sec)
+
+mysql> #Average Age of Employees#
+mysql> SELECT
+    ->     ROUND(AVG(Age), 2) AS Average_Age
+    -> FROM hr_data;
++-------------+
+| Average_Age |
++-------------+
+|       38.97 |
++-------------+
+1 row in set (0.02 sec)
+
+mysql> # Average Promotion
+mysql> SELECT
+    ->     ROUND(AVG(YearsSinceLastPromotion), 2) AS Avg_Promotion
+    -> FROM hr_data;
++---------------+
+| Avg_Promotion |
++---------------+
+|          5.87 |
++---------------+
+1 row in set (0.02 sec)
+
+mysql> #Overall Attrition Rate#
+mysql> SELECT
+    ->     ROUND(AVG(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) * 100, 2) AS Overall_Attrition_Rate_Percentage
+    -> FROM hr_data;
++-----------------------------------+
+| Overall_Attrition_Rate_Percentage |
++-----------------------------------+
+|                             50.21 |
++-----------------------------------+
+1 row in set (0.07 sec)
+
+mysql> SELECT
+    ->     ROUND(AVG(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) * 100, 2) AS Attrition_Rate
+    -> FROM hr_data;
++----------------+
+| Attrition_Rate |
++----------------+
+|          50.21 |
++----------------+
+1 row in set (0.07 sec)
+
+mysql> #Average Attrition rate for all Departments#
+mysql> SELECT
+    ->     Department,
+    ->     ROUND(AVG(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) * 100, 2) AS Attrition_Rate_Percentage
+    -> FROM hr_data
+    -> GROUP BY Department;
++------------------------+---------------------------+
+| Department             | Attrition_Rate_Percentage |
++------------------------+---------------------------+
+| Software               |                     50.54 |
+| Hardware               |                     49.44 |
+| Human Resources        |                     49.86 |
+| Support                |                     50.19 |
+| Sales                  |                     50.02 |
+| Research & Development |                     51.21 |
++------------------------+---------------------------+
+6 rows in set (0.12 sec)
+
+mysql> #Average Hourly Rate of Male Research Scientist#
+mysql> SELECT
+    ->     ROUND(AVG(HourlyRate), 2) AS Avg_HourlyRate_Male_RS
+    -> FROM hr_data
+    -> WHERE Gender = 'Male' AND JobRole = 'Research Scientist';
++------------------------+
+| Avg_HourlyRate_Male_RS |
++------------------------+
+|                 114.45 |
++------------------------+
+1 row in set (0.04 sec)
+
+mysql> Attrition Rate vs Monthly Income Stats#
+    -> SELECT
+    ->     Attrition,
+    ->     ROUND(AVG(MonthlyIncome), 2) AS Avg_MonthlyIncome,
+    ->     ROUND(MIN(MonthlyIncome), 2) AS Min_Income,
+    ->     ROUND(MAX(MonthlyIncome), 2) AS Max_Income,
+    ->     COUNT(*) AS Employee_Count
+    -> FROM hr_data
+    -> GROUP BY Attrition;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Attrition Rate vs Monthly Income Stats
+SELECT
+    Attrition,
+    ROUND(AVG(Mont' at line 1
+mysql> #Average Working Years for Each Department#
+mysql> SELECT
+    ->     Department,
+    ->     ROUND(AVG(TotalWorkingYears), 2) AS Avg_WorkingYears
+    -> FROM hr_data
+    -> GROUP BY Department;
++------------------------+------------------+
+| Department             | Avg_WorkingYears |
++------------------------+------------------+
+| Software               |            20.65 |
+| Hardware               |            20.48 |
+| Human Resources        |            20.45 |
+| Support                |            20.48 |
+| Sales                  |            20.62 |
+| Research & Development |            20.30 |
++------------------------+------------------+
+6 rows in set (0.07 sec)
+
+mysql> #Job Role vs Work-Life Balance#
+mysql> SELECT
+    ->     JobRole,
+    ->     ROUND(AVG(WorkLifeBalance), 2) AS Avg_WorkLife_Balance
+    -> FROM hr_data
+    -> GROUP BY JobRole
+    -> ORDER BY Avg_WorkLife_Balance DESC;
++---------------------------+----------------------+
+| JobRole                   | Avg_WorkLife_Balance |
++---------------------------+----------------------+
+| Developer                 |                 2.51 |
+| Healthcare Representative |                 2.51 |
+| Human Resources           |                 2.51 |
+| Research Scientist        |                 2.51 |
+| Manufacturing Director    |                 2.50 |
+| Manager                   |                 2.50 |
+| Sales Representative      |                 2.50 |
+| Research Director         |                 2.49 |
+| Laboratory Technician     |                 2.49 |
+| Sales Executive           |                 2.47 |
++---------------------------+----------------------+
+10 rows in set (0.05 sec)
+
+mysql> #Attrition Rate vs Years Since Last Promotion#
+mysql> SELECT
+    ->     ROUND(AVG(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) * 100, 2) AS Attrition_Rate_Percentage,
+    ->     ROUND(AVG(YearsSinceLastPromotion), 2) AS Avg_Years_Since_Last_Promotion
+    -> FROM hr_data;
++---------------------------+--------------------------------+
+| Attrition_Rate_Percentage | Avg_Years_Since_Last_Promotion |
++---------------------------+--------------------------------+
+|                     50.21 |    5.87 |
++---------------------------+--------------------------------+
+1 row in set (0.03 sec)
+
+mysql> #Total Employees by Department#
+mysql> SELECT
+    ->     Department,
+    ->     COUNT(*) AS Total_Employees
+    -> FROM hr_data
+    -> GROUP BY Department
+    -> ORDER BY Total_Employees DESC;
++------------------------+-----------------+
+| Department             | Total_Employees |
++------------------------+-----------------+
+| Sales                  |            8453 |
+| Human Resources        |            8418 |
+| Software               |            8336 |
+| Research & Development |            8319 |
+| Support                |            8305 |
+| Hardware               |            8169 |
++------------------------+-----------------+
+6 rows in set (0.05 sec)
+
+mysql> #Education Field by Average Attrition Rate#
+mysql> SELECT
+    ->     EducationField,
+    ->     ROUND(AVG(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) * 100, 2) AS Avg_Attrition_Rate_Percentage
+    -> FROM hr_data
+    -> GROUP BY EducationField
+    -> ORDER BY Avg_Attrition_Rate_Percentage DESC;
++------------------+-------------------------------+
+| EducationField   | Avg_Attrition_Rate_Percentage |
++------------------+-------------------------------+
+| Medical          |                         50.81 |
+| Other            |                         50.62 |
+| Human Resources  |                         50.28 |
+| Marketing        |                         50.07 |
+| Technical Degree |                         50.06 |
+| Life Sciences    |                         49.41 |
++------------------+-------------------------------+
+6 rows in set (0.08 sec)
+
+mysql>
